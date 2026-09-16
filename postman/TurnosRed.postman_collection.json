@@ -1,0 +1,60 @@
+{
+  "info": {
+    "name": "TurnosRed - 5 endpoints",
+    "description": "Pruebas de la API de turnos",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    }
+  ],
+  "item": [
+    {
+      "name": "1 - Obtener todos los turnos",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/turnos"
+      }
+    },
+    {
+      "name": "2 - Obtener turno por ID",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/turnos/102"
+      }
+    },
+    {
+      "name": "3 - Crear turno",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"paciente\": \"Paciente Ejemplo\",\n  \"documento\": 10000000,\n  \"especialidad\": \"nutrición\",\n  \"fecha\": \"20/08/2026\",\n  \"hora\": \"14.30\",\n  \"confirmado\": \"si\"\n}"
+        },
+        "url": "{{baseUrl}}/turnos"
+      }
+    },
+    {
+      "name": "4 - Actualizar turno",
+      "request": {
+        "method": "PUT",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"hora\": \"15:00\",\n  \"confirmado\": true,\n  \"observaciones\": \"Turno reprogramado\"\n}"
+        },
+        "url": "{{baseUrl}}/turnos/104"
+      }
+    },
+    {
+      "name": "5 - Eliminar turno",
+      "request": {
+        "method": "DELETE",
+        "url": "{{baseUrl}}/turnos/104"
+      }
+    }
+  ]
+}
