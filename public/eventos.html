@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Eventos de TurnosRed</title>
+    <style>
+      body {
+        max-width: 850px;
+        margin: 40px auto;
+        padding: 0 20px;
+        font-family: Arial, sans-serif;
+      }
+      #estado {
+        color: #b91c1c;
+      }
+      #eventos {
+        padding: 20px;
+        color: #e5e7eb;
+        background: #111827;
+        border-radius: 8px;
+        min-height: 220px;
+        white-space: pre-wrap;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Eventos en tiempo real</h1>
+    <p>Estado: <strong id="estado">Desconectado</strong></p>
+    <div id="eventos">Esperando eventos...</div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const socket = io();
+      const estado = document.getElementById('estado');
+      const eventos = document.getElementById('eventos');
+
+      socket.on('connect', () => {
+        estado.textContent = 'Conectado';
+        estado.style.color = '#15803d';
+      });
+
+      function mostrarEvento(nombre, turno) {
+        eventos.textContent = `${nombre}\n${JSON.stringify(turno, null, 2)}\n\n${eventos.textContent}`;
+      }
+
+      socket.on('turno:nuevo', (turno) => mostrarEvento('turno:nuevo', turno));
+      socket.on('turno:actualizado', (turno) => mostrarEvento('turno:actualizado', turno));
+      socket.on('turno:eliminado', (turno) => mostrarEvento('turno:eliminado', turno));
+    </script>
+  </body>
+</html>
