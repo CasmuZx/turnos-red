@@ -1,0 +1,5 @@
+# Punto 2.c: archivos y carpetas que no se suben a Git.
+node_modules/
+dist/
+.env
+*.log
