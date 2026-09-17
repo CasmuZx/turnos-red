@@ -1,0 +1,2889 @@
+{
+  "info": {
+    "name": "TurnosRed API 2",
+    "description": "Ejecutar la carpeta API local en orden con un entorno activo. Mock Server se ejecuta por separado y devuelve ejemplos estáticos. No hay autenticación en esta actividad; token queda reservado para una integración futura.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "mockUrl",
+      "value": ""
+    },
+    {
+      "key": "token",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "API local — flujo automatizado",
+      "item": [
+        {
+          "name": "01 Listar médicos",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/medicos",
+            "description": "01 Listar médicos"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Contrato JSON válido\", () => pm.response.to.have.jsonSchema({\"type\": \"array\", \"items\": {\"type\": \"object\", \"required\": [\"id\", \"nombre\", \"documento\", \"especialidad\", \"disponible\"], \"additionalProperties\": false, \"properties\": {\"id\": {\"type\": \"integer\", \"minimum\": 1}, \"nombre\": {\"type\": \"string\", \"minLength\": 1}, \"documento\": {\"type\": \"string\", \"minLength\": 1}, \"especialidad\": {\"type\": \"string\", \"minLength\": 1}, \"disponible\": {\"type\": \"boolean\"}}}}));"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "01 Listar médicos",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/medicos",
+                "description": "01 Listar médicos"
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[{\"id\":1,\"nombre\":\"Medico Demo Uno\",\"documento\":\"DEMO-MED-001\",\"especialidad\":\"Pediatría\",\"disponible\":true},{\"id\":2,\"nombre\":\"Medico Demo Dos\",\"documento\":\"DEMO-MED-002\",\"especialidad\":\"Odontología\",\"disponible\":true},{\"id\":3,\"nombre\":\"Medico Demo Tres\",\"documento\":\"DEMO-MED-003\",\"especialidad\":\"Clínica médica\",\"disponible\":false}]"
+            }
+          ]
+        },
+        {
+          "name": "02 Crear médico y guardar ID",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/medicos",
+            "description": "02 Crear médico y guardar ID",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Médico de prueba\",\n  \"documento\": \"DEMO-MED-004\",\n  \"especialidad\": \"Pediatría\",\n  \"disponible\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 201\", () => pm.response.to.have.status(201));",
+                  "pm.test(\"Contrato JSON válido\", () => pm.response.to.have.jsonSchema({\"type\": \"object\", \"required\": [\"id\", \"nombre\", \"documento\", \"especialidad\", \"disponible\"], \"additionalProperties\": false, \"properties\": {\"id\": {\"type\": \"integer\", \"minimum\": 1}, \"nombre\": {\"type\": \"string\", \"minLength\": 1}, \"documento\": {\"type\": \"string\", \"minLength\": 1}, \"especialidad\": {\"type\": \"string\", \"minLength\": 1}, \"disponible\": {\"type\": \"boolean\"}}}));",
+                  "if (pm.response.code === 201) pm.environment.set(\"medicoId\", pm.response.json().id);"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "02 Crear médico y guardar ID",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/medicos",
+                "description": "02 Crear médico y guardar ID",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Médico de prueba\",\n  \"documento\": \"DEMO-MED-004\",\n  \"especialidad\": \"Pediatría\",\n  \"disponible\": true\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\"nombre\":\"Médico de prueba\",\"documento\":\"DEMO-MED-004\",\"especialidad\":\"Pediatría\",\"disponible\":true,\"id\":4}"
+            }
+          ]
+        },
+        {
+          "name": "03 Consultar médico creado",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/medicos/{{medicoId}}",
+            "description": "03 Consultar médico creado"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Contrato JSON válido\", () => pm.response.to.have.jsonSchema({\"type\": \"object\", \"required\": [\"id\", \"nombre\", \"documento\", \"especialidad\", \"disponible\"], \"additionalProperties\": false, \"properties\": {\"id\": {\"type\": \"integer\", \"minimum\": 1}, \"nombre\": {\"type\": \"string\", \"minLength\": 1}, \"documento\": {\"type\": \"string\", \"minLength\": 1}, \"especialidad\": {\"type\": \"string\", \"minLength\": 1}, \"disponible\": {\"type\": \"boolean\"}}}));",
+                  "pm.test(\"ID encadenado\", () => pm.expect(pm.response.json().id).to.eql(Number(pm.environment.get(\"medicoId\"))));"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "03 Consultar médico creado",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/medicos/{{medicoId}}",
+                "description": "03 Consultar médico creado"
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\"nombre\":\"Médico de prueba\",\"documento\":\"DEMO-MED-004\",\"especialidad\":\"Pediatría\",\"disponible\":true,\"id\":4}"
+            }
+          ]
+        },
+        {
+          "name": "04 Actualizar médico completo",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/medicos/{{medicoId}}",
+            "description": "04 Actualizar médico completo",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Médico actualizado\",\n  \"documento\": \"DEMO-MED-004\",\n  \"especialidad\": \"Pediatría\",\n  \"disponible\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Contrato JSON válido\", () => pm.response.to.have.jsonSchema({\"type\": \"object\", \"required\": [\"id\", \"nombre\", \"documento\", \"especialidad\", \"disponible\"], \"additionalProperties\": false, \"properties\": {\"id\": {\"type\": \"integer\", \"minimum\": 1}, \"nombre\": {\"type\": \"string\", \"minLength\": 1}, \"documento\": {\"type\": \"string\", \"minLength\": 1}, \"especialidad\": {\"type\": \"string\", \"minLength\": 1}, \"disponible\": {\"type\": \"boolean\"}}}));"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "04 Actualizar médico completo",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/medicos/{{medicoId}}",
+                "description": "04 Actualizar médico completo",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Médico actualizado\",\n  \"documento\": \"DEMO-MED-004\",\n  \"especialidad\": \"Pediatría\",\n  \"disponible\": true\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\"nombre\":\"Médico actualizado\",\"documento\":\"DEMO-MED-004\",\"especialidad\":\"Pediatría\",\"disponible\":true,\"id\":4}"
+            }
+          ]
+        },
+        {
+          "name": "05 Filtrar médicos disponibles",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/medicos?especialidad=Pediatria&disponible=true",
+            "description": "05 Filtrar médicos disponibles"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Contrato JSON válido\", () => pm.response.to.have.jsonSchema({\"type\": \"array\", \"items\": {\"type\": \"object\", \"required\": [\"id\", \"nombre\", \"documento\", \"especialidad\", \"disponible\"], \"additionalProperties\": false, \"properties\": {\"id\": {\"type\": \"integer\", \"minimum\": 1}, \"nombre\": {\"type\": \"string\", \"minLength\": 1}, \"documento\": {\"type\": \"string\", \"minLength\": 1}, \"especialidad\": {\"type\": \"string\", \"minLength\": 1}, \"disponible\": {\"type\": \"boolean\"}}}}));",
+                  "pm.test(\"Filtro aplicado\", () => { const b=pm.response.json(); pm.expect(b.length).to.be.above(0); b.forEach(m => pm.expect(m.disponible).to.eql(true)); });"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "05 Filtrar médicos disponibles",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/medicos?especialidad=Pediatria&disponible=true",
+                "description": "05 Filtrar médicos disponibles"
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[{\"id\":1,\"nombre\":\"Medico Demo Uno\",\"documento\":\"DEMO-MED-001\",\"especialidad\":\"Pediatría\",\"disponible\":true},{\"nombre\":\"Médico actualizado\",\"documento\":\"DEMO-MED-004\",\"especialidad\":\"Pediatría\",\"disponible\":true,\"id\":4}]"
+            }
+          ]
+        },
+        {
+          "name": "06 Filtrar médicos no disponibles",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/medicos?disponible=false",
+            "description": "06 Filtrar médicos no disponibles"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Contrato JSON válido\", () => pm.response.to.have.jsonSchema({\"type\": \"array\", \"items\": {\"type\": \"object\", \"required\": [\"id\", \"nombre\", \"documento\", \"especialidad\", \"disponible\"], \"additionalProperties\": false, \"properties\": {\"id\": {\"type\": \"integer\", \"minimum\": 1}, \"nombre\": {\"type\": \"string\", \"minLength\": 1}, \"documento\": {\"type\": \"string\", \"minLength\": 1}, \"especialidad\": {\"type\": \"string\", \"minLength\": 1}, \"disponible\": {\"type\": \"boolean\"}}}}));",
+                  "pm.test(\"False no se convierte en true\", () => { const b=pm.response.json(); pm.expect(b.length).to.be.above(0); b.forEach(m => pm.expect(m.disponible).to.eql(false)); });"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "06 Filtrar médicos no disponibles",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/medicos?disponible=false",
+                "description": "06 Filtrar médicos no disponibles"
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[{\"id\":3,\"nombre\":\"Medico Demo Tres\",\"documento\":\"DEMO-MED-003\",\"especialidad\":\"Clínica médica\",\"disponible\":false}]"
+            }
+          ]
+        },
+        {
+          "name": "07 Documento médico numérico rechazado",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/medicos",
+            "description": "07 Documento médico numérico rechazado",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Médico de prueba\",\n  \"documento\": 123,\n  \"especialidad\": \"Pediatría\",\n  \"disponible\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"Contrato JSON válido\", () => pm.response.to.have.jsonSchema({\"type\": \"object\", \"required\": [\"status\", \"message\", \"code\", \"details\"], \"additionalProperties\": false, \"properties\": {\"status\": {\"type\": \"integer\"}, \"message\": {\"type\": \"string\"}, \"code\": {\"type\": \"string\"}, \"details\": {\"type\": \"array\", \"items\": {\"type\": \"object\", \"required\": [\"field\", \"message\"], \"properties\": {\"field\": {\"type\": \"string\"}, \"message\": {\"type\": \"string\"}}}}}}));",
+                  "pm.test(\"Error uniforme\", () => { const b = pm.response.json(); pm.expect(b.status).to.eql(400); pm.expect(b.code).to.eql(\"VALIDATION_ERROR\"); });",
+                  "pm.test(\"Campo inválido identificado\", () => pm.expect(pm.response.json().details.some(d => d.field === \"documento\")).to.eql(true));"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "07 Documento médico numérico rechazado",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/medicos",
+                "description": "07 Documento médico numérico rechazado",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Médico de prueba\",\n  \"documento\": 123,\n  \"especialidad\": \"Pediatría\",\n  \"disponible\": true\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\"status\":400,\"message\":\"Error de validación en los datos ingresados\",\"code\":\"VALIDATION_ERROR\",\"details\":[{\"field\":\"documento\",\"message\":\"Invalid input: expected string, received number\",\"code\":\"invalid_type\"}]}"
+            }
+          ]
+        },
+        {
+          "name": "08 Especialidad en mayúsculas rechazada",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/medicos",
+            "description": "08 Especialidad en mayúsculas rechazada",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Médico de prueba\",\n  \"documento\": \"DEMO-MED-004\",\n  \"especialidad\": \"PEDIATRÍA\",\n  \"disponible\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"Contrato JSON válido\", () => pm.response.to.have.jsonSchema({\"type\": \"object\", \"required\": [\"status\", \"message\", \"code\", \"details\"], \"additionalProperties\": false, \"properties\": {\"status\": {\"type\": \"integer\"}, \"message\": {\"type\": \"string\"}, \"code\": {\"type\": \"string\"}, \"details\": {\"type\": \"array\", \"items\": {\"type\": \"object\", \"required\": [\"field\", \"message\"], \"properties\": {\"field\": {\"type\": \"string\"}, \"message\": {\"type\": \"string\"}}}}}}));",
+                  "pm.test(\"Error uniforme\", () => { const b = pm.response.json(); pm.expect(b.status).to.eql(400); pm.expect(b.code).to.eql(\"VALIDATION_ERROR\"); });",
+                  "pm.test(\"Campo inválido identificado\", () => pm.expect(pm.response.json().details.some(d => d.field === \"especialidad\")).to.eql(true));"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "08 Especialidad en mayúsculas rechazada",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/medicos",
+                "description": "08 Especialidad en mayúsculas rechazada",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Médico de prueba\",\n  \"documento\": \"DEMO-MED-004\",\n  \"especialidad\": \"PEDIATRÍA\",\n  \"disponible\": true\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\"status\":400,\"message\":\"Error de validación en los datos ingresados\",\"code\":\"VALIDATION_ERROR\",\"details\":[{\"field\":\"especialidad\",\"message\":\"Usá inicial mayúscula y el resto en minúsculas, por ejemplo Pediatría o Clínica médica\",\"code\":\"invalid_format\"}]}"
+            }
+          ]
+        },
+        {
+          "name": "09 Disponible inválido en query",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/medicos?disponible=si",
+            "description": "09 Disponible inválido en query"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"Contrato JSON válido\", () => pm.response.to.have.jsonSchema({\"type\": \"object\", \"required\": [\"status\", \"message\", \"code\", \"details\"], \"additionalProperties\": false, \"properties\": {\"status\": {\"type\": \"integer\"}, \"message\": {\"type\": \"string\"}, \"code\": {\"type\": \"string\"}, \"details\": {\"type\": \"array\", \"items\": {\"type\": \"object\", \"required\": [\"field\", \"message\"], \"properties\": {\"field\": {\"type\": \"string\"}, \"message\": {\"type\": \"string\"}}}}}}));",
+                  "pm.test(\"Error uniforme\", () => { const b = pm.response.json(); pm.expect(b.status).to.eql(400); pm.expect(b.code).to.eql(\"VALIDATION_ERROR\"); });",
+                  "pm.test(\"Campo inválido identificado\", () => pm.expect(pm.response.json().details.some(d => d.field === \"disponible\")).to.eql(true));"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "09 Disponible inválido en query",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/medicos?disponible=si",
+                "description": "09 Disponible inválido en query"
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\"status\":400,\"message\":\"Error de validación en los datos ingresados\",\"code\":\"VALIDATION_ERROR\",\"details\":[{\"field\":\"disponible\",\"message\":\"Invalid option: expected one of \\\"true\\\"|\\\"false\\\"\",\"code\":\"invalid_value\"}]}"
+            }
+          ]
+        },
+        {
+          "name": "10 Médico inexistente",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/medicos/999999",
+            "description": "10 Médico inexistente"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 404\", () => pm.response.to.have.status(404));",
+                  "pm.test(\"Contrato JSON válido\", () => pm.response.to.have.jsonSchema({\"type\": \"object\", \"required\": [\"status\", \"message\", \"code\", \"details\"], \"additionalProperties\": false, \"properties\": {\"status\": {\"type\": \"integer\"}, \"message\": {\"type\": \"string\"}, \"code\": {\"type\": \"string\"}, \"details\": {\"type\": \"array\", \"items\": {\"type\": \"object\", \"required\": [\"field\", \"message\"], \"properties\": {\"field\": {\"type\": \"string\"}, \"message\": {\"type\": \"string\"}}}}}}));",
+                  "pm.test(\"Error uniforme\", () => { const b = pm.response.json(); pm.expect(b.status).to.eql(404); pm.expect(b.code).to.eql(\"NOT_FOUND\"); });"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "10 Médico inexistente",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/medicos/999999",
+                "description": "10 Médico inexistente"
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\"status\":404,\"message\":\"No existe un médico con ID 999999.\",\"code\":\"NOT_FOUND\",\"details\":[]}"
+            }
+          ]
+        },
+        {
+          "name": "11 ID médico inválido",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/medicos/abc",
+            "description": "11 ID médico inválido"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"Contrato JSON válido\", () => pm.response.to.have.jsonSchema({\"type\": \"object\", \"required\": [\"status\", \"message\", \"code\", \"details\"], \"additionalProperties\": false, \"properties\": {\"status\": {\"type\": \"integer\"}, \"message\": {\"type\": \"string\"}, \"code\": {\"type\": \"string\"}, \"details\": {\"type\": \"array\", \"items\": {\"type\": \"object\", \"required\": [\"field\", \"message\"], \"properties\": {\"field\": {\"type\": \"string\"}, \"message\": {\"type\": \"string\"}}}}}}));",
+                  "pm.test(\"Error uniforme\", () => { const b = pm.response.json(); pm.expect(b.status).to.eql(400); pm.expect(b.code).to.eql(\"VALIDATION_ERROR\"); });",
+                  "pm.test(\"Campo inválido identificado\", () => pm.expect(pm.response.json().details.some(d => d.field === \"id\")).to.eql(true));"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "11 ID médico inválido",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/medicos/abc",
+                "description": "11 ID médico inválido"
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\"status\":400,\"message\":\"Error de validación en los datos ingresados\",\"code\":\"VALIDATION_ERROR\",\"details\":[{\"field\":\"id\",\"message\":\"El ID debe ser un entero positivo\",\"code\":\"invalid_format\"}]}"
+            }
+          ]
+        },
+        {
+          "name": "12 Crear turno y guardar ID",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/turnos",
+            "description": "12 Crear turno y guardar ID",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"paciente\": \"Paciente Demo Tres\",\n  \"documento\": \"DEMO-PAC-003\",\n  \"especialidad\": \"Pediatría\",\n  \"medicoId\": {{medicoId}},\n  \"fecha\": \"14/08/2026\",\n  \"hora\": \"14:00\",\n  \"confirmado\": true,\n  \"observaciones\": \"Prueba API 2\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 201\", () => pm.response.to.have.status(201));",
+                  "pm.test(\"Contrato JSON válido\", () => pm.response.to.have.jsonSchema({\"type\": \"object\", \"required\": [\"id\", \"paciente\", \"documento\", \"especialidad\", \"medicoId\", \"fecha\", \"hora\", \"confirmado\"], \"additionalProperties\": false, \"properties\": {\"id\": {\"type\": \"integer\", \"minimum\": 1}, \"paciente\": {\"type\": \"string\", \"minLength\": 1}, \"documento\": {\"type\": \"string\", \"minLength\": 1}, \"especialidad\": {\"type\": \"string\", \"minLength\": 1}, \"medicoId\": {\"type\": \"integer\", \"minimum\": 1}, \"fecha\": {\"type\": \"string\", \"pattern\": \"^\\\\d{4}-\\\\d{2}-\\\\d{2}$\"}, \"hora\": {\"type\": \"string\", \"pattern\": \"^([01]\\\\d|2[0-3]):[0-5]\\\\d$\"}, \"confirmado\": {\"type\": \"boolean\"}, \"observaciones\": {\"type\": \"string\"}}}));",
+                  "if (pm.response.code === 201) pm.environment.set(\"turnoId\", pm.response.json().id);",
+                  "pm.test(\"Médico relacionado\", () => pm.expect(pm.response.json().medicoId).to.eql(Number(pm.environment.get(\"medicoId\"))));"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "12 Crear turno y guardar ID",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/turnos",
+                "description": "12 Crear turno y guardar ID",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"paciente\": \"Paciente Demo Tres\",\n  \"documento\": \"DEMO-PAC-003\",\n  \"especialidad\": \"Pediatría\",\n  \"medicoId\": {{medicoId}},\n  \"fecha\": \"14/08/2026\",\n  \"hora\": \"14:00\",\n  \"confirmado\": true,\n  \"observaciones\": \"Prueba API 2\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\"paciente\":\"Paciente Demo Tres\",\"documento\":\"DEMO-PAC-003\",\"especialidad\":\"Pediatría\",\"medicoId\":4,\"fecha\":\"2026-08-14\",\"hora\":\"14:00\",\"confirmado\":true,\"observaciones\":\"Prueba API 2\",\"id\":104}"
+            }
+          ]
+        },
+        {
+          "name": "13 Consultar turno creado",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/turnos/{{turnoId}}",
+            "description": "13 Consultar turno creado"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Contrato JSON válido\", () => pm.response.to.have.jsonSchema({\"type\": \"object\", \"required\": [\"id\", \"paciente\", \"documento\", \"especialidad\", \"medicoId\", \"fecha\", \"hora\", \"confirmado\"], \"additionalProperties\": false, \"properties\": {\"id\": {\"type\": \"integer\", \"minimum\": 1}, \"paciente\": {\"type\": \"string\", \"minLength\": 1}, \"documento\": {\"type\": \"string\", \"minLength\": 1}, \"especialidad\": {\"type\": \"string\", \"minLength\": 1}, \"medicoId\": {\"type\": \"integer\", \"minimum\": 1}, \"fecha\": {\"type\": \"string\", \"pattern\": \"^\\\\d{4}-\\\\d{2}-\\\\d{2}$\"}, \"hora\": {\"type\": \"string\", \"pattern\": \"^([01]\\\\d|2[0-3]):[0-5]\\\\d$\"}, \"confirmado\": {\"type\": \"boolean\"}, \"observaciones\": {\"type\": \"string\"}}}));"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "13 Consultar turno creado",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/turnos/{{turnoId}}",
+                "description": "13 Consultar turno creado"
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\"paciente\":\"Paciente Demo Tres\",\"documento\":\"DEMO-PAC-003\",\"especialidad\":\"Pediatría\",\"medicoId\":4,\"fecha\":\"2026-08-14\",\"hora\":\"14:00\",\"confirmado\":true,\"observaciones\":\"Prueba API 2\",\"id\":104}"
+            }
+          ]
+        },
+        {
+          "name": "14 Listar turnos",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/turnos",
+            "description": "14 Listar turnos"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Contrato JSON válido\", () => pm.response.to.have.jsonSchema({\"type\": \"array\", \"items\": {\"type\": \"object\", \"required\": [\"id\", \"paciente\", \"documento\", \"especialidad\", \"medicoId\", \"fecha\", \"hora\", \"confirmado\"], \"additionalProperties\": false, \"properties\": {\"id\": {\"type\": \"integer\", \"minimum\": 1}, \"paciente\": {\"type\": \"string\", \"minLength\": 1}, \"documento\": {\"type\": \"string\", \"minLength\": 1}, \"especialidad\": {\"type\": \"string\", \"minLength\": 1}, \"medicoId\": {\"type\": \"integer\", \"minimum\": 1}, \"fecha\": {\"type\": \"string\", \"pattern\": \"^\\\\d{4}-\\\\d{2}-\\\\d{2}$\"}, \"hora\": {\"type\": \"string\", \"pattern\": \"^([01]\\\\d|2[0-3]):[0-5]\\\\d$\"}, \"confirmado\": {\"type\": \"boolean\"}, \"observaciones\": {\"type\": \"string\"}}}}));"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "14 Listar turnos",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/turnos",
+                "description": "14 Listar turnos"
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[{\"paciente\":\"Paciente Demo Uno\",\"documento\":\"DEMO-PAC-001\",\"especialidad\":\"Pediatría\",\"medicoId\":1,\"fecha\":\"2026-08-14\",\"hora\":\"10:00\",\"confirmado\":true,\"id\":102},{\"paciente\":\"Paciente Demo Dos\",\"documento\":\"DEMO-PAC-002\",\"especialidad\":\"Odontología\",\"medicoId\":2,\"fecha\":\"2026-08-15\",\"hora\":\"09:30\",\"confirmado\":true,\"observaciones\":\"Control anual\",\"id\":103},{\"paciente\":\"Paciente Demo Tres\",\"documento\":\"DEMO-PAC-003\",\"especialidad\":\"Pediatría\",\"medicoId\":4,\"fecha\":\"2026-08-14\",\"hora\":\"14:00\",\"confirmado\":true,\"observaciones\":\"Prueba API 2\",\"id\":104}]"
+            }
+          ]
+        },
+        {
+          "name": "15 Combinar filtros de turnos",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/turnos?especialidad=Pediatria&fecha=14/08/2026&medicoId={{medicoId}}",
+            "description": "15 Combinar filtros de turnos"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Contrato JSON válido\", () => pm.response.to.have.jsonSchema({\"type\": \"array\", \"items\": {\"type\": \"object\", \"required\": [\"id\", \"paciente\", \"documento\", \"especialidad\", \"medicoId\", \"fecha\", \"hora\", \"confirmado\"], \"additionalProperties\": false, \"properties\": {\"id\": {\"type\": \"integer\", \"minimum\": 1}, \"paciente\": {\"type\": \"string\", \"minLength\": 1}, \"documento\": {\"type\": \"string\", \"minLength\": 1}, \"especialidad\": {\"type\": \"string\", \"minLength\": 1}, \"medicoId\": {\"type\": \"integer\", \"minimum\": 1}, \"fecha\": {\"type\": \"string\", \"pattern\": \"^\\\\d{4}-\\\\d{2}-\\\\d{2}$\"}, \"hora\": {\"type\": \"string\", \"pattern\": \"^([01]\\\\d|2[0-3]):[0-5]\\\\d$\"}, \"confirmado\": {\"type\": \"boolean\"}, \"observaciones\": {\"type\": \"string\"}}}}));",
+                  "pm.test(\"Todos los filtros aplicados\", () => { const b=pm.response.json(); pm.expect(b.length).to.be.above(0); b.forEach(t => { pm.expect(t.medicoId).to.eql(Number(pm.environment.get(\"medicoId\"))); pm.expect(t.fecha).to.eql(\"2026-08-14\"); pm.expect(t.especialidad).to.eql(\"Pediatría\"); }); });"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "15 Combinar filtros de turnos",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/turnos?especialidad=Pediatria&fecha=14/08/2026&medicoId={{medicoId}}",
+                "description": "15 Combinar filtros de turnos"
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[{\"paciente\":\"Paciente Demo Tres\",\"documento\":\"DEMO-PAC-003\",\"especialidad\":\"Pediatría\",\"medicoId\":4,\"fecha\":\"2026-08-14\",\"hora\":\"14:00\",\"confirmado\":true,\"observaciones\":\"Prueba API 2\",\"id\":104}]"
+            }
+          ]
+        },
+        {
+          "name": "16 Actualizar turno completo",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/turnos/{{turnoId}}",
+            "description": "16 Actualizar turno completo",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"paciente\": \"Paciente Demo Tres\",\n  \"documento\": \"DEMO-PAC-003\",\n  \"especialidad\": \"Pediatría\",\n  \"medicoId\": {{medicoId}},\n  \"fecha\": \"14/08/2026\",\n  \"hora\": \"15:00\",\n  \"confirmado\": true,\n  \"observaciones\": \"Actualizado\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Contrato JSON válido\", () => pm.response.to.have.jsonSchema({\"type\": \"object\", \"required\": [\"id\", \"paciente\", \"documento\", \"especialidad\", \"medicoId\", \"fecha\", \"hora\", \"confirmado\"], \"additionalProperties\": false, \"properties\": {\"id\": {\"type\": \"integer\", \"minimum\": 1}, \"paciente\": {\"type\": \"string\", \"minLength\": 1}, \"documento\": {\"type\": \"string\", \"minLength\": 1}, \"especialidad\": {\"type\": \"string\", \"minLength\": 1}, \"medicoId\": {\"type\": \"integer\", \"minimum\": 1}, \"fecha\": {\"type\": \"string\", \"pattern\": \"^\\\\d{4}-\\\\d{2}-\\\\d{2}$\"}, \"hora\": {\"type\": \"string\", \"pattern\": \"^([01]\\\\d|2[0-3]):[0-5]\\\\d$\"}, \"confirmado\": {\"type\": \"boolean\"}, \"observaciones\": {\"type\": \"string\"}}}));",
+                  "pm.test(\"Hora actualizada\", () => pm.expect(pm.response.json().hora).to.eql(\"15:00\"));"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "16 Actualizar turno completo",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/turnos/{{turnoId}}",
+                "description": "16 Actualizar turno completo",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"paciente\": \"Paciente Demo Tres\",\n  \"documento\": \"DEMO-PAC-003\",\n  \"especialidad\": \"Pediatría\",\n  \"medicoId\": {{medicoId}},\n  \"fecha\": \"14/08/2026\",\n  \"hora\": \"15:00\",\n  \"confirmado\": true,\n  \"observaciones\": \"Actualizado\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\"paciente\":\"Paciente Demo Tres\",\"documento\":\"DEMO-PAC-003\",\"especialidad\":\"Pediatría\",\"medicoId\":4,\"fecha\":\"2026-08-14\",\"hora\":\"15:00\",\"confirmado\":true,\"observaciones\":\"Actualizado\",\"id\":104}"
+            }
+          ]
+        },
+        {
+          "name": "17 Documento turno numérico rechazado",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/turnos",
+            "description": "17 Documento turno numérico rechazado",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"paciente\": \"Paciente Demo Tres\",\n  \"documento\": 123,\n  \"especialidad\": \"Pediatría\",\n  \"medicoId\": {{medicoId}},\n  \"fecha\": \"14/08/2026\",\n  \"hora\": \"14:00\",\n  \"confirmado\": true,\n  \"observaciones\": \"Prueba API 2\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"Contrato JSON válido\", () => pm.response.to.have.jsonSchema({\"type\": \"object\", \"required\": [\"status\", \"message\", \"code\", \"details\"], \"additionalProperties\": false, \"properties\": {\"status\": {\"type\": \"integer\"}, \"message\": {\"type\": \"string\"}, \"code\": {\"type\": \"string\"}, \"details\": {\"type\": \"array\", \"items\": {\"type\": \"object\", \"required\": [\"field\", \"message\"], \"properties\": {\"field\": {\"type\": \"string\"}, \"message\": {\"type\": \"string\"}}}}}}));",
+                  "pm.test(\"Error uniforme\", () => { const b = pm.response.json(); pm.expect(b.status).to.eql(400); pm.expect(b.code).to.eql(\"VALIDATION_ERROR\"); });",
+                  "pm.test(\"Campo inválido identificado\", () => pm.expect(pm.response.json().details.some(d => d.field === \"documento\")).to.eql(true));"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "17 Documento turno numérico rechazado",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/turnos",
+                "description": "17 Documento turno numérico rechazado",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"paciente\": \"Paciente Demo Tres\",\n  \"documento\": 123,\n  \"especialidad\": \"Pediatría\",\n  \"medicoId\": {{medicoId}},\n  \"fecha\": \"14/08/2026\",\n  \"hora\": \"14:00\",\n  \"confirmado\": true,\n  \"observaciones\": \"Prueba API 2\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\"status\":400,\"message\":\"Error de validación en los datos ingresados\",\"code\":\"VALIDATION_ERROR\",\"details\":[{\"field\":\"documento\",\"message\":\"Invalid input: expected string, received number\",\"code\":\"invalid_type\"}]}"
+            }
+          ]
+        },
+        {
+          "name": "18 Fecha inexistente rechazada",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/turnos",
+            "description": "18 Fecha inexistente rechazada",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"paciente\": \"Paciente Demo Tres\",\n  \"documento\": \"DEMO-PAC-003\",\n  \"especialidad\": \"Pediatría\",\n  \"medicoId\": {{medicoId}},\n  \"fecha\": \"31/02/2026\",\n  \"hora\": \"14:00\",\n  \"confirmado\": true,\n  \"observaciones\": \"Prueba API 2\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"Contrato JSON válido\", () => pm.response.to.have.jsonSchema({\"type\": \"object\", \"required\": [\"status\", \"message\", \"code\", \"details\"], \"additionalProperties\": false, \"properties\": {\"status\": {\"type\": \"integer\"}, \"message\": {\"type\": \"string\"}, \"code\": {\"type\": \"string\"}, \"details\": {\"type\": \"array\", \"items\": {\"type\": \"object\", \"required\": [\"field\", \"message\"], \"properties\": {\"field\": {\"type\": \"string\"}, \"message\": {\"type\": \"string\"}}}}}}));",
+                  "pm.test(\"Error uniforme\", () => { const b = pm.response.json(); pm.expect(b.status).to.eql(400); pm.expect(b.code).to.eql(\"VALIDATION_ERROR\"); });",
+                  "pm.test(\"Campo inválido identificado\", () => pm.expect(pm.response.json().details.some(d => d.field === \"fecha\")).to.eql(true));"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "18 Fecha inexistente rechazada",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/turnos",
+                "description": "18 Fecha inexistente rechazada",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"paciente\": \"Paciente Demo Tres\",\n  \"documento\": \"DEMO-PAC-003\",\n  \"especialidad\": \"Pediatría\",\n  \"medicoId\": {{medicoId}},\n  \"fecha\": \"31/02/2026\",\n  \"hora\": \"14:00\",\n  \"confirmado\": true,\n  \"observaciones\": \"Prueba API 2\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\"status\":400,\"message\":\"Error de validación en los datos ingresados\",\"code\":\"VALIDATION_ERROR\",\"details\":[{\"field\":\"fecha\",\"message\":\"La fecha no existe en el calendario\",\"code\":\"custom\"}]}"
+            }
+          ]
+        },
+        {
+          "name": "19 Hora fuera de rango rechazada",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/turnos",
+            "description": "19 Hora fuera de rango rechazada",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"paciente\": \"Paciente Demo Tres\",\n  \"documento\": \"DEMO-PAC-003\",\n  \"especialidad\": \"Pediatría\",\n  \"medicoId\": {{medicoId}},\n  \"fecha\": \"14/08/2026\",\n  \"hora\": \"25:00\",\n  \"confirmado\": true,\n  \"observaciones\": \"Prueba API 2\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"Contrato JSON válido\", () => pm.response.to.have.jsonSchema({\"type\": \"object\", \"required\": [\"status\", \"message\", \"code\", \"details\"], \"additionalProperties\": false, \"properties\": {\"status\": {\"type\": \"integer\"}, \"message\": {\"type\": \"string\"}, \"code\": {\"type\": \"string\"}, \"details\": {\"type\": \"array\", \"items\": {\"type\": \"object\", \"required\": [\"field\", \"message\"], \"properties\": {\"field\": {\"type\": \"string\"}, \"message\": {\"type\": \"string\"}}}}}}));",
+                  "pm.test(\"Error uniforme\", () => { const b = pm.response.json(); pm.expect(b.status).to.eql(400); pm.expect(b.code).to.eql(\"VALIDATION_ERROR\"); });",
+                  "pm.test(\"Campo inválido identificado\", () => pm.expect(pm.response.json().details.some(d => d.field === \"hora\")).to.eql(true));"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "19 Hora fuera de rango rechazada",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/turnos",
+                "description": "19 Hora fuera de rango rechazada",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"paciente\": \"Paciente Demo Tres\",\n  \"documento\": \"DEMO-PAC-003\",\n  \"especialidad\": \"Pediatría\",\n  \"medicoId\": {{medicoId}},\n  \"fecha\": \"14/08/2026\",\n  \"hora\": \"25:00\",\n  \"confirmado\": true,\n  \"observaciones\": \"Prueba API 2\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\"status\":400,\"message\":\"Error de validación en los datos ingresados\",\"code\":\"VALIDATION_ERROR\",\"details\":[{\"field\":\"hora\",\"message\":\"Usá HH:mm entre 00:00 y 23:59\",\"code\":\"invalid_format\"}]}"
+            }
+          ]
+        },
+        {
+          "name": "20 Médico inexistente al crear turno",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/turnos",
+            "description": "20 Médico inexistente al crear turno",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"paciente\": \"Paciente Demo Tres\",\n  \"documento\": \"DEMO-PAC-003\",\n  \"especialidad\": \"Pediatría\",\n  \"medicoId\": 999999,\n  \"fecha\": \"14/08/2026\",\n  \"hora\": \"14:00\",\n  \"confirmado\": true,\n  \"observaciones\": \"Prueba API 2\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 404\", () => pm.response.to.have.status(404));",
+                  "pm.test(\"Contrato JSON válido\", () => pm.response.to.have.jsonSchema({\"type\": \"object\", \"required\": [\"status\", \"message\", \"code\", \"details\"], \"additionalProperties\": false, \"properties\": {\"status\": {\"type\": \"integer\"}, \"message\": {\"type\": \"string\"}, \"code\": {\"type\": \"string\"}, \"details\": {\"type\": \"array\", \"items\": {\"type\": \"object\", \"required\": [\"field\", \"message\"], \"properties\": {\"field\": {\"type\": \"string\"}, \"message\": {\"type\": \"string\"}}}}}}));",
+                  "pm.test(\"Error uniforme\", () => { const b = pm.response.json(); pm.expect(b.status).to.eql(404); pm.expect(b.code).to.eql(\"NOT_FOUND\"); });"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "20 Médico inexistente al crear turno",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/turnos",
+                "description": "20 Médico inexistente al crear turno",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"paciente\": \"Paciente Demo Tres\",\n  \"documento\": \"DEMO-PAC-003\",\n  \"especialidad\": \"Pediatría\",\n  \"medicoId\": 999999,\n  \"fecha\": \"14/08/2026\",\n  \"hora\": \"14:00\",\n  \"confirmado\": true,\n  \"observaciones\": \"Prueba API 2\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\"status\":404,\"message\":\"No existe un médico con ID 999999.\",\"code\":\"NOT_FOUND\",\"details\":[]}"
+            }
+          ]
+        },
+        {
+          "name": "21 Especialidad incompatible",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/turnos",
+            "description": "21 Especialidad incompatible",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"paciente\": \"Paciente Demo Tres\",\n  \"documento\": \"DEMO-PAC-003\",\n  \"especialidad\": \"Nutrición\",\n  \"medicoId\": {{medicoId}},\n  \"fecha\": \"14/08/2026\",\n  \"hora\": \"14:00\",\n  \"confirmado\": true,\n  \"observaciones\": \"Prueba API 2\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"Contrato JSON válido\", () => pm.response.to.have.jsonSchema({\"type\": \"object\", \"required\": [\"status\", \"message\", \"code\", \"details\"], \"additionalProperties\": false, \"properties\": {\"status\": {\"type\": \"integer\"}, \"message\": {\"type\": \"string\"}, \"code\": {\"type\": \"string\"}, \"details\": {\"type\": \"array\", \"items\": {\"type\": \"object\", \"required\": [\"field\", \"message\"], \"properties\": {\"field\": {\"type\": \"string\"}, \"message\": {\"type\": \"string\"}}}}}}));",
+                  "pm.test(\"Error uniforme\", () => { const b = pm.response.json(); pm.expect(b.status).to.eql(400); pm.expect(b.code).to.eql(\"VALIDATION_ERROR\"); });",
+                  "pm.test(\"Campo inválido identificado\", () => pm.expect(pm.response.json().details.some(d => d.field === \"especialidad\")).to.eql(true));"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "21 Especialidad incompatible",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/turnos",
+                "description": "21 Especialidad incompatible",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"paciente\": \"Paciente Demo Tres\",\n  \"documento\": \"DEMO-PAC-003\",\n  \"especialidad\": \"Nutrición\",\n  \"medicoId\": {{medicoId}},\n  \"fecha\": \"14/08/2026\",\n  \"hora\": \"14:00\",\n  \"confirmado\": true,\n  \"observaciones\": \"Prueba API 2\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\"status\":400,\"message\":\"La especialidad del turno debe coincidir con la del médico.\",\"code\":\"VALIDATION_ERROR\",\"details\":[{\"field\":\"especialidad\",\"message\":\"Especialidad incompatible con medicoId\"}]}"
+            }
+          ]
+        },
+        {
+          "name": "22 Médico no disponible",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/turnos",
+            "description": "22 Médico no disponible",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"paciente\": \"Paciente Demo Tres\",\n  \"documento\": \"DEMO-PAC-003\",\n  \"especialidad\": \"Clínica médica\",\n  \"medicoId\": 3,\n  \"fecha\": \"14/08/2026\",\n  \"hora\": \"14:00\",\n  \"confirmado\": true,\n  \"observaciones\": \"Prueba API 2\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"Contrato JSON válido\", () => pm.response.to.have.jsonSchema({\"type\": \"object\", \"required\": [\"status\", \"message\", \"code\", \"details\"], \"additionalProperties\": false, \"properties\": {\"status\": {\"type\": \"integer\"}, \"message\": {\"type\": \"string\"}, \"code\": {\"type\": \"string\"}, \"details\": {\"type\": \"array\", \"items\": {\"type\": \"object\", \"required\": [\"field\", \"message\"], \"properties\": {\"field\": {\"type\": \"string\"}, \"message\": {\"type\": \"string\"}}}}}}));",
+                  "pm.test(\"Error uniforme\", () => { const b = pm.response.json(); pm.expect(b.status).to.eql(400); pm.expect(b.code).to.eql(\"VALIDATION_ERROR\"); });",
+                  "pm.test(\"Campo inválido identificado\", () => pm.expect(pm.response.json().details.some(d => d.field === \"medicoId\")).to.eql(true));"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "22 Médico no disponible",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/turnos",
+                "description": "22 Médico no disponible",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"paciente\": \"Paciente Demo Tres\",\n  \"documento\": \"DEMO-PAC-003\",\n  \"especialidad\": \"Clínica médica\",\n  \"medicoId\": 3,\n  \"fecha\": \"14/08/2026\",\n  \"hora\": \"14:00\",\n  \"confirmado\": true,\n  \"observaciones\": \"Prueba API 2\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\"status\":400,\"message\":\"El médico no está disponible.\",\"code\":\"VALIDATION_ERROR\",\"details\":[{\"field\":\"medicoId\",\"message\":\"Médico no disponible\"}]}"
+            }
+          ]
+        },
+        {
+          "name": "23 PUT requiere todos los campos",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/turnos/{{turnoId}}",
+            "description": "23 PUT requiere todos los campos",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"hora\": \"16:00\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"Contrato JSON válido\", () => pm.response.to.have.jsonSchema({\"type\": \"object\", \"required\": [\"status\", \"message\", \"code\", \"details\"], \"additionalProperties\": false, \"properties\": {\"status\": {\"type\": \"integer\"}, \"message\": {\"type\": \"string\"}, \"code\": {\"type\": \"string\"}, \"details\": {\"type\": \"array\", \"items\": {\"type\": \"object\", \"required\": [\"field\", \"message\"], \"properties\": {\"field\": {\"type\": \"string\"}, \"message\": {\"type\": \"string\"}}}}}}));",
+                  "pm.test(\"Error uniforme\", () => { const b = pm.response.json(); pm.expect(b.status).to.eql(400); pm.expect(b.code).to.eql(\"VALIDATION_ERROR\"); });",
+                  "pm.test(\"Campo inválido identificado\", () => pm.expect(pm.response.json().details.some(d => d.field === \"paciente\")).to.eql(true));"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "23 PUT requiere todos los campos",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/turnos/{{turnoId}}",
+                "description": "23 PUT requiere todos los campos",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"hora\": \"16:00\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\"status\":400,\"message\":\"Error de validación en los datos ingresados\",\"code\":\"VALIDATION_ERROR\",\"details\":[{\"field\":\"paciente\",\"message\":\"Invalid input: expected string, received undefined\",\"code\":\"invalid_type\"},{\"field\":\"documento\",\"message\":\"Invalid input: expected string, received undefined\",\"code\":\"invalid_type\"},{\"field\":\"especialidad\",\"message\":\"Invalid input: expected string, received undefined\",\"code\":\"invalid_type\"},{\"field\":\"medicoId\",\"message\":\"Invalid input: expected number, received undefined\",\"code\":\"invalid_type\"},{\"field\":\"fecha\",\"message\":\"Invalid input: expected string, received undefined\",\"code\":\"invalid_type\"},{\"field\":\"confirmado\",\"message\":\"Invalid input: expected boolean, received undefined\",\"code\":\"invalid_type\"}]}"
+            }
+          ]
+        },
+        {
+          "name": "24 Turno inexistente",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/turnos/999999",
+            "description": "24 Turno inexistente"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 404\", () => pm.response.to.have.status(404));",
+                  "pm.test(\"Contrato JSON válido\", () => pm.response.to.have.jsonSchema({\"type\": \"object\", \"required\": [\"status\", \"message\", \"code\", \"details\"], \"additionalProperties\": false, \"properties\": {\"status\": {\"type\": \"integer\"}, \"message\": {\"type\": \"string\"}, \"code\": {\"type\": \"string\"}, \"details\": {\"type\": \"array\", \"items\": {\"type\": \"object\", \"required\": [\"field\", \"message\"], \"properties\": {\"field\": {\"type\": \"string\"}, \"message\": {\"type\": \"string\"}}}}}}));",
+                  "pm.test(\"Error uniforme\", () => { const b = pm.response.json(); pm.expect(b.status).to.eql(404); pm.expect(b.code).to.eql(\"NOT_FOUND\"); });"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "24 Turno inexistente",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/turnos/999999",
+                "description": "24 Turno inexistente"
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\"status\":404,\"message\":\"No existe un turno con ID 999999.\",\"code\":\"NOT_FOUND\",\"details\":[]}"
+            }
+          ]
+        },
+        {
+          "name": "25 Query ID inválido",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/turnos?medicoId=abc",
+            "description": "25 Query ID inválido"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"Contrato JSON válido\", () => pm.response.to.have.jsonSchema({\"type\": \"object\", \"required\": [\"status\", \"message\", \"code\", \"details\"], \"additionalProperties\": false, \"properties\": {\"status\": {\"type\": \"integer\"}, \"message\": {\"type\": \"string\"}, \"code\": {\"type\": \"string\"}, \"details\": {\"type\": \"array\", \"items\": {\"type\": \"object\", \"required\": [\"field\", \"message\"], \"properties\": {\"field\": {\"type\": \"string\"}, \"message\": {\"type\": \"string\"}}}}}}));",
+                  "pm.test(\"Error uniforme\", () => { const b = pm.response.json(); pm.expect(b.status).to.eql(400); pm.expect(b.code).to.eql(\"VALIDATION_ERROR\"); });",
+                  "pm.test(\"Campo inválido identificado\", () => pm.expect(pm.response.json().details.some(d => d.field === \"medicoId\")).to.eql(true));"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "25 Query ID inválido",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/turnos?medicoId=abc",
+                "description": "25 Query ID inválido"
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\"status\":400,\"message\":\"Error de validación en los datos ingresados\",\"code\":\"VALIDATION_ERROR\",\"details\":[{\"field\":\"medicoId\",\"message\":\"El ID debe ser un entero positivo\",\"code\":\"invalid_format\"}]}"
+            }
+          ]
+        },
+        {
+          "name": "26 Proteger médico con turnos",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/medicos/{{medicoId}}",
+            "description": "26 Proteger médico con turnos"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"Contrato JSON válido\", () => pm.response.to.have.jsonSchema({\"type\": \"object\", \"required\": [\"status\", \"message\", \"code\", \"details\"], \"additionalProperties\": false, \"properties\": {\"status\": {\"type\": \"integer\"}, \"message\": {\"type\": \"string\"}, \"code\": {\"type\": \"string\"}, \"details\": {\"type\": \"array\", \"items\": {\"type\": \"object\", \"required\": [\"field\", \"message\"], \"properties\": {\"field\": {\"type\": \"string\"}, \"message\": {\"type\": \"string\"}}}}}}));",
+                  "pm.test(\"Error uniforme\", () => { const b = pm.response.json(); pm.expect(b.status).to.eql(400); pm.expect(b.code).to.eql(\"VALIDATION_ERROR\"); });",
+                  "pm.test(\"Campo inválido identificado\", () => pm.expect(pm.response.json().details.some(d => d.field === \"id\")).to.eql(true));"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "26 Proteger médico con turnos",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/medicos/{{medicoId}}",
+                "description": "26 Proteger médico con turnos"
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\"status\":400,\"message\":\"Eliminá primero los turnos asociados al médico.\",\"code\":\"VALIDATION_ERROR\",\"details\":[{\"field\":\"id\",\"message\":\"El médico tiene turnos asociados\"}]}"
+            }
+          ]
+        },
+        {
+          "name": "27 Proteger especialidad médico con turnos",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/medicos/{{medicoId}}",
+            "description": "27 Proteger especialidad médico con turnos",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Médico de prueba\",\n  \"documento\": \"DEMO-MED-004\",\n  \"especialidad\": \"Nutrición\",\n  \"disponible\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"Contrato JSON válido\", () => pm.response.to.have.jsonSchema({\"type\": \"object\", \"required\": [\"status\", \"message\", \"code\", \"details\"], \"additionalProperties\": false, \"properties\": {\"status\": {\"type\": \"integer\"}, \"message\": {\"type\": \"string\"}, \"code\": {\"type\": \"string\"}, \"details\": {\"type\": \"array\", \"items\": {\"type\": \"object\", \"required\": [\"field\", \"message\"], \"properties\": {\"field\": {\"type\": \"string\"}, \"message\": {\"type\": \"string\"}}}}}}));",
+                  "pm.test(\"Error uniforme\", () => { const b = pm.response.json(); pm.expect(b.status).to.eql(400); pm.expect(b.code).to.eql(\"VALIDATION_ERROR\"); });",
+                  "pm.test(\"Campo inválido identificado\", () => pm.expect(pm.response.json().details.some(d => d.field === \"especialidad\")).to.eql(true));"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "27 Proteger especialidad médico con turnos",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/medicos/{{medicoId}}",
+                "description": "27 Proteger especialidad médico con turnos",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Médico de prueba\",\n  \"documento\": \"DEMO-MED-004\",\n  \"especialidad\": \"Nutrición\",\n  \"disponible\": true\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\"status\":400,\"message\":\"No se puede cambiar la especialidad de un médico con turnos asociados.\",\"code\":\"VALIDATION_ERROR\",\"details\":[{\"field\":\"especialidad\",\"message\":\"El médico tiene turnos asociados\"}]}"
+            }
+          ]
+        },
+        {
+          "name": "28 Eliminar turno",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/turnos/{{turnoId}}",
+            "description": "28 Eliminar turno"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 204\", () => pm.response.to.have.status(204));",
+                  "pm.test(\"Sin cuerpo en 204\", () => pm.expect(pm.response.text()).to.eql(\"\"));"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "28 Eliminar turno",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/turnos/{{turnoId}}",
+                "description": "28 Eliminar turno"
+              },
+              "status": "No Content",
+              "code": 204,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "body": ""
+            }
+          ]
+        },
+        {
+          "name": "29 Verificar turno eliminado",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/turnos/{{turnoId}}",
+            "description": "29 Verificar turno eliminado"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 404\", () => pm.response.to.have.status(404));",
+                  "pm.test(\"Contrato JSON válido\", () => pm.response.to.have.jsonSchema({\"type\": \"object\", \"required\": [\"status\", \"message\", \"code\", \"details\"], \"additionalProperties\": false, \"properties\": {\"status\": {\"type\": \"integer\"}, \"message\": {\"type\": \"string\"}, \"code\": {\"type\": \"string\"}, \"details\": {\"type\": \"array\", \"items\": {\"type\": \"object\", \"required\": [\"field\", \"message\"], \"properties\": {\"field\": {\"type\": \"string\"}, \"message\": {\"type\": \"string\"}}}}}}));",
+                  "pm.test(\"Error uniforme\", () => { const b = pm.response.json(); pm.expect(b.status).to.eql(404); pm.expect(b.code).to.eql(\"NOT_FOUND\"); });"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "29 Verificar turno eliminado",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/turnos/{{turnoId}}",
+                "description": "29 Verificar turno eliminado"
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\"status\":404,\"message\":\"No existe un turno con ID 104.\",\"code\":\"NOT_FOUND\",\"details\":[]}"
+            }
+          ]
+        },
+        {
+          "name": "30 Eliminar médico",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/medicos/{{medicoId}}",
+            "description": "30 Eliminar médico"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 204\", () => pm.response.to.have.status(204));",
+                  "pm.test(\"Sin cuerpo en 204\", () => pm.expect(pm.response.text()).to.eql(\"\"));"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "30 Eliminar médico",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/medicos/{{medicoId}}",
+                "description": "30 Eliminar médico"
+              },
+              "status": "No Content",
+              "code": 204,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "body": ""
+            }
+          ]
+        },
+        {
+          "name": "31 Verificar médico eliminado",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/medicos/{{medicoId}}",
+            "description": "31 Verificar médico eliminado"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 404\", () => pm.response.to.have.status(404));",
+                  "pm.test(\"Contrato JSON válido\", () => pm.response.to.have.jsonSchema({\"type\": \"object\", \"required\": [\"status\", \"message\", \"code\", \"details\"], \"additionalProperties\": false, \"properties\": {\"status\": {\"type\": \"integer\"}, \"message\": {\"type\": \"string\"}, \"code\": {\"type\": \"string\"}, \"details\": {\"type\": \"array\", \"items\": {\"type\": \"object\", \"required\": [\"field\", \"message\"], \"properties\": {\"field\": {\"type\": \"string\"}, \"message\": {\"type\": \"string\"}}}}}}));",
+                  "pm.test(\"Error uniforme\", () => { const b = pm.response.json(); pm.expect(b.status).to.eql(404); pm.expect(b.code).to.eql(\"NOT_FOUND\"); });"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "31 Verificar médico eliminado",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/medicos/{{medicoId}}",
+                "description": "31 Verificar médico eliminado"
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\"status\":404,\"message\":\"No existe un médico con ID 4.\",\"code\":\"NOT_FOUND\",\"details\":[]}"
+            }
+          ]
+        },
+        {
+          "name": "32 Filtros sin resultados",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/turnos?especialidad=Neurología",
+            "description": "32 Filtros sin resultados"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Contrato JSON válido\", () => pm.response.to.have.jsonSchema({\"type\": \"array\", \"items\": {\"type\": \"object\", \"required\": [\"id\", \"paciente\", \"documento\", \"especialidad\", \"medicoId\", \"fecha\", \"hora\", \"confirmado\"], \"additionalProperties\": false, \"properties\": {\"id\": {\"type\": \"integer\", \"minimum\": 1}, \"paciente\": {\"type\": \"string\", \"minLength\": 1}, \"documento\": {\"type\": \"string\", \"minLength\": 1}, \"especialidad\": {\"type\": \"string\", \"minLength\": 1}, \"medicoId\": {\"type\": \"integer\", \"minimum\": 1}, \"fecha\": {\"type\": \"string\", \"pattern\": \"^\\\\d{4}-\\\\d{2}-\\\\d{2}$\"}, \"hora\": {\"type\": \"string\", \"pattern\": \"^([01]\\\\d|2[0-3]):[0-5]\\\\d$\"}, \"confirmado\": {\"type\": \"boolean\"}, \"observaciones\": {\"type\": \"string\"}}}}));",
+                  "pm.test(\"Lista vacía\", () => pm.expect(pm.response.json()).to.eql([]));"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "32 Filtros sin resultados",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/turnos?especialidad=Neurología",
+                "description": "32 Filtros sin resultados"
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[]"
+            }
+          ]
+        },
+        {
+          "name": "33 Fecha query imposible",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/turnos?fecha=2026-02-30",
+            "description": "33 Fecha query imposible"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"Contrato JSON válido\", () => pm.response.to.have.jsonSchema({\"type\": \"object\", \"required\": [\"status\", \"message\", \"code\", \"details\"], \"additionalProperties\": false, \"properties\": {\"status\": {\"type\": \"integer\"}, \"message\": {\"type\": \"string\"}, \"code\": {\"type\": \"string\"}, \"details\": {\"type\": \"array\", \"items\": {\"type\": \"object\", \"required\": [\"field\", \"message\"], \"properties\": {\"field\": {\"type\": \"string\"}, \"message\": {\"type\": \"string\"}}}}}}));",
+                  "pm.test(\"Error uniforme\", () => { const b = pm.response.json(); pm.expect(b.status).to.eql(400); pm.expect(b.code).to.eql(\"VALIDATION_ERROR\"); });",
+                  "pm.test(\"Campo inválido identificado\", () => pm.expect(pm.response.json().details.some(d => d.field === \"fecha\")).to.eql(true));"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "33 Fecha query imposible",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/turnos?fecha=2026-02-30",
+                "description": "33 Fecha query imposible"
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\"status\":400,\"message\":\"Error de validación en los datos ingresados\",\"code\":\"VALIDATION_ERROR\",\"details\":[{\"field\":\"fecha\",\"message\":\"La fecha no existe en el calendario\",\"code\":\"custom\"}]}"
+            }
+          ]
+        },
+        {
+          "name": "34 Ruta inexistente",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/ruta-inexistente",
+            "description": "34 Ruta inexistente"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 404\", () => pm.response.to.have.status(404));",
+                  "pm.test(\"Contrato JSON válido\", () => pm.response.to.have.jsonSchema({\"type\": \"object\", \"required\": [\"status\", \"message\", \"code\", \"details\"], \"additionalProperties\": false, \"properties\": {\"status\": {\"type\": \"integer\"}, \"message\": {\"type\": \"string\"}, \"code\": {\"type\": \"string\"}, \"details\": {\"type\": \"array\", \"items\": {\"type\": \"object\", \"required\": [\"field\", \"message\"], \"properties\": {\"field\": {\"type\": \"string\"}, \"message\": {\"type\": \"string\"}}}}}}));",
+                  "pm.test(\"Error uniforme\", () => { const b = pm.response.json(); pm.expect(b.status).to.eql(404); pm.expect(b.code).to.eql(\"NOT_FOUND\"); });"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "34 Ruta inexistente",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/ruta-inexistente",
+                "description": "34 Ruta inexistente"
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\"status\":404,\"message\":\"Ruta no encontrada.\",\"code\":\"NOT_FOUND\",\"details\":[]}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Mock Server — ejemplos estáticos",
+      "item": [
+        {
+          "name": "Mock listar médicos",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-mock-response-name",
+                "value": "Mock listar médicos"
+              }
+            ],
+            "url": "{{mockUrl}}/medicos",
+            "description": "Mock listar médicos"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Contrato JSON válido\", () => pm.response.to.have.jsonSchema({\"type\": \"array\", \"items\": {\"type\": \"object\", \"required\": [\"id\", \"nombre\", \"documento\", \"especialidad\", \"disponible\"], \"additionalProperties\": false, \"properties\": {\"id\": {\"type\": \"integer\", \"minimum\": 1}, \"nombre\": {\"type\": \"string\", \"minLength\": 1}, \"documento\": {\"type\": \"string\", \"minLength\": 1}, \"especialidad\": {\"type\": \"string\", \"minLength\": 1}, \"disponible\": {\"type\": \"boolean\"}}}}));"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "Mock listar médicos",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "x-mock-response-name",
+                    "value": "Mock listar médicos"
+                  }
+                ],
+                "url": "{{mockUrl}}/medicos",
+                "description": "Mock listar médicos"
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"nombre\": \"Médico de prueba\",\n    \"documento\": \"DEMO-MED-004\",\n    \"especialidad\": \"Pediatría\",\n    \"disponible\": true,\n    \"id\": 9001\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Mock crear médico",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-mock-response-name",
+                "value": "Mock crear médico"
+              }
+            ],
+            "url": "{{mockUrl}}/medicos",
+            "description": "Mock crear médico",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Médico de prueba\",\n  \"documento\": \"DEMO-MED-004\",\n  \"especialidad\": \"Pediatría\",\n  \"disponible\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 201\", () => pm.response.to.have.status(201));",
+                  "pm.test(\"Contrato JSON válido\", () => pm.response.to.have.jsonSchema({\"type\": \"object\", \"required\": [\"id\", \"nombre\", \"documento\", \"especialidad\", \"disponible\"], \"additionalProperties\": false, \"properties\": {\"id\": {\"type\": \"integer\", \"minimum\": 1}, \"nombre\": {\"type\": \"string\", \"minLength\": 1}, \"documento\": {\"type\": \"string\", \"minLength\": 1}, \"especialidad\": {\"type\": \"string\", \"minLength\": 1}, \"disponible\": {\"type\": \"boolean\"}}}));"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "Mock crear médico",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "x-mock-response-name",
+                    "value": "Mock crear médico"
+                  }
+                ],
+                "url": "{{mockUrl}}/medicos",
+                "description": "Mock crear médico",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Médico de prueba\",\n  \"documento\": \"DEMO-MED-004\",\n  \"especialidad\": \"Pediatría\",\n  \"disponible\": true\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"nombre\": \"Médico de prueba\",\n  \"documento\": \"DEMO-MED-004\",\n  \"especialidad\": \"Pediatría\",\n  \"disponible\": true,\n  \"id\": 9001\n}"
+            }
+          ]
+        },
+        {
+          "name": "Mock consultar médico",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-mock-response-name",
+                "value": "Mock consultar médico"
+              }
+            ],
+            "url": "{{mockUrl}}/medicos/9001",
+            "description": "Mock consultar médico"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Contrato JSON válido\", () => pm.response.to.have.jsonSchema({\"type\": \"object\", \"required\": [\"id\", \"nombre\", \"documento\", \"especialidad\", \"disponible\"], \"additionalProperties\": false, \"properties\": {\"id\": {\"type\": \"integer\", \"minimum\": 1}, \"nombre\": {\"type\": \"string\", \"minLength\": 1}, \"documento\": {\"type\": \"string\", \"minLength\": 1}, \"especialidad\": {\"type\": \"string\", \"minLength\": 1}, \"disponible\": {\"type\": \"boolean\"}}}));"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "Mock consultar médico",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "x-mock-response-name",
+                    "value": "Mock consultar médico"
+                  }
+                ],
+                "url": "{{mockUrl}}/medicos/9001",
+                "description": "Mock consultar médico"
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"nombre\": \"Médico de prueba\",\n  \"documento\": \"DEMO-MED-004\",\n  \"especialidad\": \"Pediatría\",\n  \"disponible\": true,\n  \"id\": 9001\n}"
+            }
+          ]
+        },
+        {
+          "name": "Mock actualizar médico",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-mock-response-name",
+                "value": "Mock actualizar médico"
+              }
+            ],
+            "url": "{{mockUrl}}/medicos/9001",
+            "description": "Mock actualizar médico",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Médico de prueba\",\n  \"documento\": \"DEMO-MED-004\",\n  \"especialidad\": \"Pediatría\",\n  \"disponible\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Contrato JSON válido\", () => pm.response.to.have.jsonSchema({\"type\": \"object\", \"required\": [\"id\", \"nombre\", \"documento\", \"especialidad\", \"disponible\"], \"additionalProperties\": false, \"properties\": {\"id\": {\"type\": \"integer\", \"minimum\": 1}, \"nombre\": {\"type\": \"string\", \"minLength\": 1}, \"documento\": {\"type\": \"string\", \"minLength\": 1}, \"especialidad\": {\"type\": \"string\", \"minLength\": 1}, \"disponible\": {\"type\": \"boolean\"}}}));"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "Mock actualizar médico",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "x-mock-response-name",
+                    "value": "Mock actualizar médico"
+                  }
+                ],
+                "url": "{{mockUrl}}/medicos/9001",
+                "description": "Mock actualizar médico",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Médico de prueba\",\n  \"documento\": \"DEMO-MED-004\",\n  \"especialidad\": \"Pediatría\",\n  \"disponible\": true\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"nombre\": \"Médico de prueba\",\n  \"documento\": \"DEMO-MED-004\",\n  \"especialidad\": \"Pediatría\",\n  \"disponible\": true,\n  \"id\": 9001\n}"
+            }
+          ]
+        },
+        {
+          "name": "Mock eliminar médico",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-mock-response-name",
+                "value": "Mock eliminar médico"
+              }
+            ],
+            "url": "{{mockUrl}}/medicos/9001",
+            "description": "Mock eliminar médico"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 204\", () => pm.response.to.have.status(204));",
+                  "pm.test(\"Sin cuerpo en 204\", () => pm.expect(pm.response.text()).to.eql(\"\"));"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "Mock eliminar médico",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "x-mock-response-name",
+                    "value": "Mock eliminar médico"
+                  }
+                ],
+                "url": "{{mockUrl}}/medicos/9001",
+                "description": "Mock eliminar médico"
+              },
+              "status": "No Content",
+              "code": 204,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "body": ""
+            }
+          ]
+        },
+        {
+          "name": "Mock listar turnos",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-mock-response-name",
+                "value": "Mock listar turnos"
+              }
+            ],
+            "url": "{{mockUrl}}/turnos",
+            "description": "Mock listar turnos"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Contrato JSON válido\", () => pm.response.to.have.jsonSchema({\"type\": \"array\", \"items\": {\"type\": \"object\", \"required\": [\"id\", \"paciente\", \"documento\", \"especialidad\", \"medicoId\", \"fecha\", \"hora\", \"confirmado\"], \"additionalProperties\": false, \"properties\": {\"id\": {\"type\": \"integer\", \"minimum\": 1}, \"paciente\": {\"type\": \"string\", \"minLength\": 1}, \"documento\": {\"type\": \"string\", \"minLength\": 1}, \"especialidad\": {\"type\": \"string\", \"minLength\": 1}, \"medicoId\": {\"type\": \"integer\", \"minimum\": 1}, \"fecha\": {\"type\": \"string\", \"pattern\": \"^\\\\d{4}-\\\\d{2}-\\\\d{2}$\"}, \"hora\": {\"type\": \"string\", \"pattern\": \"^([01]\\\\d|2[0-3]):[0-5]\\\\d$\"}, \"confirmado\": {\"type\": \"boolean\"}, \"observaciones\": {\"type\": \"string\"}}}}));"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "Mock listar turnos",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "x-mock-response-name",
+                    "value": "Mock listar turnos"
+                  }
+                ],
+                "url": "{{mockUrl}}/turnos",
+                "description": "Mock listar turnos"
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"paciente\": \"Paciente Demo Tres\",\n    \"documento\": \"DEMO-PAC-003\",\n    \"especialidad\": \"Pediatría\",\n    \"medicoId\": 9001,\n    \"fecha\": \"2026-08-14\",\n    \"hora\": \"14:00\",\n    \"confirmado\": true,\n    \"observaciones\": \"Prueba API 2\",\n    \"id\": 9002\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Mock crear turno",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-mock-response-name",
+                "value": "Mock crear turno"
+              }
+            ],
+            "url": "{{mockUrl}}/turnos",
+            "description": "Mock crear turno",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"paciente\": \"Paciente Demo Tres\",\n  \"documento\": \"DEMO-PAC-003\",\n  \"especialidad\": \"Pediatría\",\n  \"medicoId\": 9001,\n  \"fecha\": \"14/08/2026\",\n  \"hora\": \"14:00\",\n  \"confirmado\": true,\n  \"observaciones\": \"Prueba API 2\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 201\", () => pm.response.to.have.status(201));",
+                  "pm.test(\"Contrato JSON válido\", () => pm.response.to.have.jsonSchema({\"type\": \"object\", \"required\": [\"id\", \"paciente\", \"documento\", \"especialidad\", \"medicoId\", \"fecha\", \"hora\", \"confirmado\"], \"additionalProperties\": false, \"properties\": {\"id\": {\"type\": \"integer\", \"minimum\": 1}, \"paciente\": {\"type\": \"string\", \"minLength\": 1}, \"documento\": {\"type\": \"string\", \"minLength\": 1}, \"especialidad\": {\"type\": \"string\", \"minLength\": 1}, \"medicoId\": {\"type\": \"integer\", \"minimum\": 1}, \"fecha\": {\"type\": \"string\", \"pattern\": \"^\\\\d{4}-\\\\d{2}-\\\\d{2}$\"}, \"hora\": {\"type\": \"string\", \"pattern\": \"^([01]\\\\d|2[0-3]):[0-5]\\\\d$\"}, \"confirmado\": {\"type\": \"boolean\"}, \"observaciones\": {\"type\": \"string\"}}}));"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "Mock crear turno",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "x-mock-response-name",
+                    "value": "Mock crear turno"
+                  }
+                ],
+                "url": "{{mockUrl}}/turnos",
+                "description": "Mock crear turno",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"paciente\": \"Paciente Demo Tres\",\n  \"documento\": \"DEMO-PAC-003\",\n  \"especialidad\": \"Pediatría\",\n  \"medicoId\": 9001,\n  \"fecha\": \"14/08/2026\",\n  \"hora\": \"14:00\",\n  \"confirmado\": true,\n  \"observaciones\": \"Prueba API 2\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"paciente\": \"Paciente Demo Tres\",\n  \"documento\": \"DEMO-PAC-003\",\n  \"especialidad\": \"Pediatría\",\n  \"medicoId\": 9001,\n  \"fecha\": \"2026-08-14\",\n  \"hora\": \"14:00\",\n  \"confirmado\": true,\n  \"observaciones\": \"Prueba API 2\",\n  \"id\": 9002\n}"
+            }
+          ]
+        },
+        {
+          "name": "Mock consultar turno",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-mock-response-name",
+                "value": "Mock consultar turno"
+              }
+            ],
+            "url": "{{mockUrl}}/turnos/9002",
+            "description": "Mock consultar turno"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Contrato JSON válido\", () => pm.response.to.have.jsonSchema({\"type\": \"object\", \"required\": [\"id\", \"paciente\", \"documento\", \"especialidad\", \"medicoId\", \"fecha\", \"hora\", \"confirmado\"], \"additionalProperties\": false, \"properties\": {\"id\": {\"type\": \"integer\", \"minimum\": 1}, \"paciente\": {\"type\": \"string\", \"minLength\": 1}, \"documento\": {\"type\": \"string\", \"minLength\": 1}, \"especialidad\": {\"type\": \"string\", \"minLength\": 1}, \"medicoId\": {\"type\": \"integer\", \"minimum\": 1}, \"fecha\": {\"type\": \"string\", \"pattern\": \"^\\\\d{4}-\\\\d{2}-\\\\d{2}$\"}, \"hora\": {\"type\": \"string\", \"pattern\": \"^([01]\\\\d|2[0-3]):[0-5]\\\\d$\"}, \"confirmado\": {\"type\": \"boolean\"}, \"observaciones\": {\"type\": \"string\"}}}));"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "Mock consultar turno",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "x-mock-response-name",
+                    "value": "Mock consultar turno"
+                  }
+                ],
+                "url": "{{mockUrl}}/turnos/9002",
+                "description": "Mock consultar turno"
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"paciente\": \"Paciente Demo Tres\",\n  \"documento\": \"DEMO-PAC-003\",\n  \"especialidad\": \"Pediatría\",\n  \"medicoId\": 9001,\n  \"fecha\": \"2026-08-14\",\n  \"hora\": \"14:00\",\n  \"confirmado\": true,\n  \"observaciones\": \"Prueba API 2\",\n  \"id\": 9002\n}"
+            }
+          ]
+        },
+        {
+          "name": "Mock actualizar turno",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-mock-response-name",
+                "value": "Mock actualizar turno"
+              }
+            ],
+            "url": "{{mockUrl}}/turnos/9002",
+            "description": "Mock actualizar turno",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"paciente\": \"Paciente Demo Tres\",\n  \"documento\": \"DEMO-PAC-003\",\n  \"especialidad\": \"Pediatría\",\n  \"medicoId\": 9001,\n  \"fecha\": \"14/08/2026\",\n  \"hora\": \"14:00\",\n  \"confirmado\": true,\n  \"observaciones\": \"Prueba API 2\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Contrato JSON válido\", () => pm.response.to.have.jsonSchema({\"type\": \"object\", \"required\": [\"id\", \"paciente\", \"documento\", \"especialidad\", \"medicoId\", \"fecha\", \"hora\", \"confirmado\"], \"additionalProperties\": false, \"properties\": {\"id\": {\"type\": \"integer\", \"minimum\": 1}, \"paciente\": {\"type\": \"string\", \"minLength\": 1}, \"documento\": {\"type\": \"string\", \"minLength\": 1}, \"especialidad\": {\"type\": \"string\", \"minLength\": 1}, \"medicoId\": {\"type\": \"integer\", \"minimum\": 1}, \"fecha\": {\"type\": \"string\", \"pattern\": \"^\\\\d{4}-\\\\d{2}-\\\\d{2}$\"}, \"hora\": {\"type\": \"string\", \"pattern\": \"^([01]\\\\d|2[0-3]):[0-5]\\\\d$\"}, \"confirmado\": {\"type\": \"boolean\"}, \"observaciones\": {\"type\": \"string\"}}}));"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "Mock actualizar turno",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "x-mock-response-name",
+                    "value": "Mock actualizar turno"
+                  }
+                ],
+                "url": "{{mockUrl}}/turnos/9002",
+                "description": "Mock actualizar turno",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"paciente\": \"Paciente Demo Tres\",\n  \"documento\": \"DEMO-PAC-003\",\n  \"especialidad\": \"Pediatría\",\n  \"medicoId\": 9001,\n  \"fecha\": \"14/08/2026\",\n  \"hora\": \"14:00\",\n  \"confirmado\": true,\n  \"observaciones\": \"Prueba API 2\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"paciente\": \"Paciente Demo Tres\",\n  \"documento\": \"DEMO-PAC-003\",\n  \"especialidad\": \"Pediatría\",\n  \"medicoId\": 9001,\n  \"fecha\": \"2026-08-14\",\n  \"hora\": \"14:00\",\n  \"confirmado\": true,\n  \"observaciones\": \"Prueba API 2\",\n  \"id\": 9002\n}"
+            }
+          ]
+        },
+        {
+          "name": "Mock eliminar turno",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-mock-response-name",
+                "value": "Mock eliminar turno"
+              }
+            ],
+            "url": "{{mockUrl}}/turnos/9002",
+            "description": "Mock eliminar turno"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 204\", () => pm.response.to.have.status(204));",
+                  "pm.test(\"Sin cuerpo en 204\", () => pm.expect(pm.response.text()).to.eql(\"\"));"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "Mock eliminar turno",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "x-mock-response-name",
+                    "value": "Mock eliminar turno"
+                  }
+                ],
+                "url": "{{mockUrl}}/turnos/9002",
+                "description": "Mock eliminar turno"
+              },
+              "status": "No Content",
+              "code": 204,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "body": ""
+            }
+          ]
+        },
+        {
+          "name": "Mock error Zod",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-mock-response-name",
+                "value": "Mock error Zod"
+              }
+            ],
+            "url": "{{mockUrl}}/turnos",
+            "description": "Mock error Zod",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"paciente\": \"Paciente Demo Tres\",\n  \"documento\": 123,\n  \"especialidad\": \"Pediatría\",\n  \"medicoId\": 9001,\n  \"fecha\": \"14/08/2026\",\n  \"hora\": \"14:00\",\n  \"confirmado\": true,\n  \"observaciones\": \"Prueba API 2\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"Contrato JSON válido\", () => pm.response.to.have.jsonSchema({\"type\": \"object\", \"required\": [\"status\", \"message\", \"code\", \"details\"], \"additionalProperties\": false, \"properties\": {\"status\": {\"type\": \"integer\"}, \"message\": {\"type\": \"string\"}, \"code\": {\"type\": \"string\"}, \"details\": {\"type\": \"array\", \"items\": {\"type\": \"object\", \"required\": [\"field\", \"message\"], \"properties\": {\"field\": {\"type\": \"string\"}, \"message\": {\"type\": \"string\"}}}}}}));",
+                  "pm.test(\"Error uniforme\", () => { const b = pm.response.json(); pm.expect(b.status).to.eql(400); pm.expect(b.code).to.eql(\"VALIDATION_ERROR\"); });",
+                  "pm.test(\"Campo inválido identificado\", () => pm.expect(pm.response.json().details.some(d => d.field === \"documento\")).to.eql(true));"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "Mock error Zod",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "x-mock-response-name",
+                    "value": "Mock error Zod"
+                  }
+                ],
+                "url": "{{mockUrl}}/turnos",
+                "description": "Mock error Zod",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"paciente\": \"Paciente Demo Tres\",\n  \"documento\": 123,\n  \"especialidad\": \"Pediatría\",\n  \"medicoId\": 9001,\n  \"fecha\": \"14/08/2026\",\n  \"hora\": \"14:00\",\n  \"confirmado\": true,\n  \"observaciones\": \"Prueba API 2\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"status\": 400,\n  \"message\": \"Error de validación en los datos ingresados\",\n  \"code\": \"VALIDATION_ERROR\",\n  \"details\": [\n    {\n      \"field\": \"documento\",\n      \"message\": \"Dato inválido\"\n    }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "Mock no encontrado",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-mock-response-name",
+                "value": "Mock no encontrado"
+              }
+            ],
+            "url": "{{mockUrl}}/turnos/999999",
+            "description": "Mock no encontrado"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 404\", () => pm.response.to.have.status(404));",
+                  "pm.test(\"Contrato JSON válido\", () => pm.response.to.have.jsonSchema({\"type\": \"object\", \"required\": [\"status\", \"message\", \"code\", \"details\"], \"additionalProperties\": false, \"properties\": {\"status\": {\"type\": \"integer\"}, \"message\": {\"type\": \"string\"}, \"code\": {\"type\": \"string\"}, \"details\": {\"type\": \"array\", \"items\": {\"type\": \"object\", \"required\": [\"field\", \"message\"], \"properties\": {\"field\": {\"type\": \"string\"}, \"message\": {\"type\": \"string\"}}}}}}));",
+                  "pm.test(\"Error uniforme\", () => { const b = pm.response.json(); pm.expect(b.status).to.eql(404); pm.expect(b.code).to.eql(\"NOT_FOUND\"); });"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "Mock no encontrado",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "x-mock-response-name",
+                    "value": "Mock no encontrado"
+                  }
+                ],
+                "url": "{{mockUrl}}/turnos/999999",
+                "description": "Mock no encontrado"
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"status\": 404,\n  \"message\": \"Recurso no encontrado\",\n  \"code\": \"NOT_FOUND\",\n  \"details\": []\n}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

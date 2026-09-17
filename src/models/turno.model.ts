@@ -1,6 +1,7 @@
 // Punto 6.a: datos como llegan desde el JSON.
 export interface TurnoCrudo {
   id?: unknown;
+  medicoId?: unknown;
   paciente?: unknown;
   documento?: unknown;
   especialidad?: unknown;
@@ -13,6 +14,7 @@ export interface TurnoCrudo {
 // Punto 6.b: turno ya normalizado.
 export interface Turno {
   id: number;
+  medicoId: number;
   paciente: string;
   documento: string;
   especialidad: string;
