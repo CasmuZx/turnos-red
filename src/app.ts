@@ -1,15 +1,16 @@
 import express from 'express';
-import { manejarError } from './controllers/turnos.controller.js';
+import { errorHandler } from './middlewares/error-handler.js';
+import { ApiError } from './errors/api-error.js';
 import { turnosRouter } from './routes/turnos.routes.js';
+import { medicosRouter } from './routes/medicos.routes.js';
 
 export const app = express();
-
-// Punto 7.b: configuración de Express.
-app.use(express.json());
+app.use(express.json({ limit: '100kb' }));
 app.use(express.static('public'));
 app.get('/', (_req, res) => {
-  res.status(200).json({ nombre: 'TurnosRed API', estado: 'activa' });
+  res.status(200).json({ nombre: 'TurnosRed API', estado: 'activa', version: '2.0.0' });
 });
 app.use('/turnos', turnosRouter);
-app.use((_req, res) => res.status(404).json({ error: 'Ruta no encontrada.' }));
-app.use(manejarError);
+app.use('/medicos', medicosRouter);
+app.use((_req, _res, next) => next(new ApiError(404, 'Ruta no encontrada.', 'NOT_FOUND')));
+app.use(errorHandler);

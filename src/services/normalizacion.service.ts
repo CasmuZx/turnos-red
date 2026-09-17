@@ -60,7 +60,10 @@ export function normalizarTurno(crudo: TurnoCrudo): Turno | null {
   const id = Number(crudo.id);
   const paciente = textoLimpio(crudo.paciente);
   const documento = textoLimpio(crudo.documento);
-  const especialidad = textoLimpio(crudo.especialidad)?.toUpperCase() ?? null;
+  const especialidad =
+    textoLimpio(crudo.especialidad)
+      ?.toLocaleLowerCase('es')
+      .replace(/^./, (letra) => letra.toLocaleUpperCase('es')) ?? null;
   const fecha = normalizarFecha(crudo.fecha);
   const hora = normalizarHora(crudo.hora);
   const confirmado = normalizarBooleano(crudo.confirmado);
@@ -81,6 +84,7 @@ export function normalizarTurno(crudo: TurnoCrudo): Turno | null {
 
   return {
     id,
+    medicoId: Number(crudo.medicoId),
     paciente,
     documento,
     especialidad,
